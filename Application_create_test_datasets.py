@@ -12,6 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pygame.locals import *
 from tkinter import messagebox
+from win32api import GetSystemMetrics
 
 
 def open_image(path_image: str) -> object :
@@ -43,14 +44,13 @@ def info_of_image(image: object) -> int:
     return row, column
 
 
-def create_dataset_object(screen , position: tuple ,size=(250,250), name= 'datasets__objects.jpg'):
+def create_dataset_object(screen , position: tuple ,size=(1000,1000), name= 'datasets__objects.jpg'):
     object_dataset = pygame.Surface(size)
     object_dataset.blit(screen, (0,0) ,(position, size))
 
-    print('Объест сохранен')
-
     pygame.image.save(object_dataset, name)
 
+    print('Объест сохранен')
 
 def create_dir(name:str) -> None:
     if name == None:
@@ -131,33 +131,65 @@ def auto_naming_image():
 
     return result
     
-
-
-def create_mapping(path_image: str):
-    pygame.init()
-
+def create_background_image(path_image: str, scale_percent = 0):
     image = plt.imread(f'{path_image}')
 
-    scale_percent = 20 
+    if scale_percent == 0:
+        scale_percent = auto_scale_background(image.shape[0], image.shape[1])
+        width = int(image.shape[1] * scale_percent / 100)
+        height = int(image.shape[0] * scale_percent / 100)
+        dim = (width, height)
 
-    width = int(image.shape[1] * scale_percent / 100)
-    height = int(image.shape[0] * scale_percent / 100)
-    dim = (width, height)
-
+    else:
+        width = int(image.shape[1] * scale_percent / 100)
+        height = int(image.shape[0] * scale_percent / 100)
+        dim = (width, height)
 
     resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
 
+    image_background = 255*(cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)).astype('uint8')
+
+    image = 255*(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)).astype('uint8')
     #plt.imshow(resized)
     #plt.show()
 
-    img_bw = 255*(cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)).astype('uint8')
-
-    row, column =  info_of_image(img_bw)    
+    return image, image_background , scale_percent
 
 
-    cv2.imwrite('execute.jpg', img=img_bw*255)
+def auto_scale_background(row, column):
+    screen_info_widht = GetSystemMetrics(0)
+    screen_info_height = GetSystemMetrics(1)
+    print(screen_info_height, screen_info_widht)
+    print(row, column)
+    
+    if row >= screen_info_height or column >= screen_info_widht:
+        result_row  = 100/(row/screen_info_height)
+        result_column = 100/(column / screen_info_widht)
+        result_scale = (result_column+result_row)/4
+    
+    else:
+        result_scale = 100
+
+    return result_scale
+
+
+def create_mapping(path_image: str, scale_percent = 0):
+
+    orginal_image, background_image, scale_percent = create_background_image(path_image = path_image, scale_percent = scale_percent)
+
+    #Создание изоображения для отображения картинки в background
+    cv2.imwrite('execute.jpg', img=background_image*255)
+
+    #Создание изоображения для отображения картинки в beckground
+    cv2.imwrite('execute_true_scale.jpg', img=orginal_image*255)
+
+    image_true_scale = pygame.image.load("execute_true_scale.jpg")
 
     background = pygame.image.load("execute.jpg")
+    
+    row, column =  info_of_image(background_image)    
+
+    print(f'Размеры измененного изображения: {row, column}')
 
     background_rect = background.get_rect(bottomright=(row, column))
 
@@ -180,29 +212,35 @@ def create_mapping(path_image: str):
 
                     name_image = choose_dirs()
                     if name_image == None :
-                        delete_execute_image()
+                        delete_execute_images()
                         continue
-                    #change_dir()                    
-                    create_dataset_object(screen , position= (event.pos[0] - 50 ,event.pos[1] - 50), name=f'{name_image}.png')
+                    #change_dir()
+                    # size_square отвечает за длину и высоту квадрата 
+                    size_square = 500                    
+                    create_dataset_object(image_true_scale ,\
+                        size=(size_square,size_square),\
+                        position= (int(event.pos[0]*100/scale_percent) - size_square/2 ,int(event.pos[1]*100/scale_percent) - size_square/2),\
+                        name=f'{name_image}.png')
                     back_to_root_dirs()
+                    print('Размер квадрата',int(size_square/2*scale_percent/100))
                     pygame.draw.rect(screen, 
                     (0, 0, 255), 
-                    (event.pos[0] - 50 , event.pos[1] -50 , 250 , 250))
+                    (event.pos[0] - int(size_square/2*scale_percent/100) , event.pos[1] - int(size_square/2*scale_percent/100) , int(size_square*scale_percent/100) , int(size_square*scale_percent/100)))
                     pygame.display.update()
-                    delete_execute_image()
-
-
-
+                    delete_execute_images()
     pygame.quit()
                 
 
-def delete_execute_image():
+def delete_execute_images():
     current_path = os.getcwd()
     for root, dirs, files in os.walk(current_path, topdown=False):
         for name in files:
             if name == 'execute.jpg':
                 print('Файл по адресу удален: ' + os.path.join(root, name))
                 os.remove(f'{current_path}\execute.jpg')
+            elif name == 'execute_true_scale.jpg':
+                print('Файл по адресу удален: ' + os.path.join(root, name))
+                os.remove(f'{current_path}\execute_true_scale.jpg')
 
 
 
@@ -278,8 +316,6 @@ def choose_dirs():
                 i = list_dir.index(f)                 # update running index
             else:
                 filename = os.path.join(folder, list_dir[i])
-
-        window.close()
 
     except IndexError as error:
         print(f'Выявлена ошибка {error}')
