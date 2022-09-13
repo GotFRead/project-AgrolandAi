@@ -1,0 +1,38 @@
+2022-09-13 14:37:45,232 - main_application - INFO - Start application
+2022-09-13 14:38:00,487 - main_application - INFO - Результат масштабирования - 20.287597226556766
+2022-09-13 14:38:00,561 - main_application - INFO - Создание изображения для создания датасетов - D:/Python/DataSets — test\180-rotate безымянный015.jpg .jpg
+2022-09-13 14:38:03,382 - main_application - INFO - Информация об изображении: высота 670, ширина 948
+2022-09-13 14:38:03,382 - main_application - INFO - Размер созданной разметки высота 670, ширина 948
+2022-09-13 14:38:15,812 - main_application - INFO - Файл по адресу удален: F:\Python\project_PVS-CNN\execute.jpg
+2022-09-13 14:38:15,848 - main_application - INFO - Файл по адресу удален: F:\Python\project_PVS-CNN\execute_true_scale.jpg
+2022-09-13 14:38:15,885 - main_application - INFO - Удаление исполняемых изображений
+2022-09-13 14:38:28,661 - main_application - INFO - Папка выбрана склон-1
+2022-09-13 14:38:28,679 - main_application - INFO - Папка - склон-1 - создана
+2022-09-13 14:38:31,032 - main_application - INFO - Папка выбрана None
+2022-09-13 14:38:31,038 - main_application - ERROR - Папка не создана!
+2022-09-13 14:38:32,750 - main_application - INFO - Результат масштабирования - 20.287597226556766
+2022-09-13 14:38:32,821 - main_application - INFO - Создание изображения для создания датасетов - D:/Python/DataSets — test\180-rotate безымянный017.jpg .jpg
+2022-09-13 14:38:34,125 - main_application - INFO - Информация об изображении: высота 670, ширина 948
+2022-09-13 14:38:34,125 - main_application - INFO - Размер созданной разметки высота 670, ширина 948
+2022-09-13 14:38:37,035 - main_application - INFO - Переход в папку F:\Python\project_PVS-CNN\склон-1
+2022-09-13 14:38:37,053 - main_application - INFO - Процедурное название объекта: склон-1-143837.053350
+2022-09-13 14:38:37,146 - main_application - INFO - Изображение - склон-1-143837.053350.png - сохранено
+2022-09-13 14:38:37,146 - main_application - INFO - Переход в корневую папку из F:\Python\project_PVS-CNN\склон-1 , в F:\Python\project_PVS-CNN\
+2022-09-13 14:38:37,147 - main_application - INFO - Размер квадрата вырезки равен : 50
+2022-09-13 14:38:37,150 - main_application - INFO - Файл по адресу удален: F:\Python\project_PVS-CNN\execute.jpg
+2022-09-13 14:38:37,167 - main_application - INFO - Файл по адресу удален: F:\Python\project_PVS-CNN\execute_true_scale.jpg
+2022-09-13 14:38:39,808 - main_application - INFO - Переход в папку F:\Python\project_PVS-CNN\склон-1
+2022-09-13 14:38:39,828 - main_application - INFO - Процедурное название объекта: склон-1-143839.828177
+2022-09-13 14:38:39,908 - main_application - INFO - Изображение - склон-1-143839.828177.png - сохранено
+2022-09-13 14:38:39,909 - main_application - INFO - Переход в корневую папку из F:\Python\project_PVS-CNN\склон-1 , в F:\Python\project_PVS-CNN\
+2022-09-13 14:38:39,909 - main_application - INFO - Размер квадрата вырезки равен : 50
+2022-09-13 14:38:42,248 - main_application - INFO - Переход в папку F:\Python\project_PVS-CNN\склон-1
+2022-09-13 14:38:42,270 - main_application - INFO - Процедурное название объекта: склон-1-143842.270073
+2022-09-13 14:38:42,403 - main_application - INFO - Изображение - склон-1-143842.270073.png - сохранено
+2022-09-13 14:38:42,403 - main_application - INFO - Переход в корневую папку из F:\Python\project_PVS-CNN\склон-1 , в F:\Python\project_PVS-CNN\
+2022-09-13 14:38:42,404 - main_application - INFO - Размер квадрата вырезки равен : 50
+2022-09-13 14:38:49,023 - main_application - INFO - Переход в папку F:\Python\project_PVS-CNN\склон-1
+2022-09-13 14:38:49,042 - main_application - INFO - Процедурное название объекта: склон-1-143849.042040
+2022-09-13 14:38:49,188 - main_application - INFO - Изображение - склон-1-143849.042040.png - сохранено
+2022-09-13 14:38:49,188 - main_application - INFO - Переход в корневую папку из F:\Python\project_PVS-CNN\склон-1 , в F:\Python\project_PVS-CNN\
+2022-09-13 14:38:49,189 - main_application - INFO - Размер квадрата вырезки равен : 50

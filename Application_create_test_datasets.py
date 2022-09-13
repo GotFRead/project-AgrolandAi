@@ -13,10 +13,26 @@ import matplotlib.pyplot as plt
 from pygame.locals import *
 from tkinter import messagebox
 from win32api import GetSystemMetrics
+import logging
 
+
+logger = logging.getLogger('main_application')
+logger.setLevel(logging.INFO)
+
+file_logger = logging.FileHandler('log_file.txt')
+
+
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s') 
+file_logger.setFormatter(formatter)
+
+logger.addHandler(file_logger)
+logger.info('Start application')
 
 def open_image(path_image: str) -> object :
     image = plt.imread(f'{path_image}')
+
+    logger.info(f'Открытие изображения {path_image}')
+
     plt.imshow(image)
     plt.show()
 
@@ -29,6 +45,8 @@ def back_to_root_dirs() -> None:
     for part in range(0,len(part_path)-1):
         new_path+=part_path[part]
         new_path+='\\'
+    
+    logger.info(f'Переход в корневую папку из {old_path} , в {new_path}')
 
     #print('Новый путь :'+ new_path)
     os.chdir(f'{new_path}')
@@ -40,7 +58,7 @@ def info_of_image(image: object) -> int:
     #plt.show()
     column=len(matrix[0])
     row=len(matrix[0][0])
-
+    logger.info(f'Информация об изображении: высота {row}, ширина {column}')
     return row, column
 
 
@@ -50,13 +68,14 @@ def create_dataset_object(screen , position: tuple ,size=(1000,1000), name= 'dat
 
     pygame.image.save(object_dataset, name)
 
-    print('Объест сохранен')
+    logger.info(f'Изображение - {name} - сохранено')
 
 def create_dir(name:str) -> None:
     if name == None:
-        print('Ошибка папка не создана')
+        logger.error(f'Папка не создана!')
         return False
     path = os.getcwd()
+    logger.info(f'Папка - {name} - создана')
     os.mkdir(f'{path}/{name}')
 
 
@@ -64,6 +83,8 @@ def change_dir(name:str) -> None:
     path = os.getcwd()
 
     path +=f'\{name}'
+
+    logger.info(f'Переход в папку {path}')
 
     #path.join(name)  
     os.chdir(path)
@@ -77,6 +98,8 @@ def naming_dirs():
     window = py.Window('Название папки', layout2)
 
     event , values = window.read()
+
+    logger.info(f'Папка выбрана {values[0]}')
 
     #print(values[0])
 
@@ -95,7 +118,7 @@ def naming_image():
 
     event , values = window.read()
 
-    print(values[0])
+    logger.info(f'Файл выбран {values[0]}')
 
     window.close()
 
@@ -153,6 +176,9 @@ def create_background_image(path_image: str, scale_percent = 0):
     #plt.imshow(resized)
     #plt.show()
 
+    logger.info(f'Создание изображения для создания датасетов - {path_image}')
+
+
     return image, image_background , scale_percent
 
 
@@ -169,6 +195,8 @@ def auto_scale_background(row, column):
     
     else:
         result_scale = 100
+
+    logger.info(f'Результат масштабирования - {result_scale}')
 
     return result_scale
 
@@ -189,7 +217,7 @@ def create_mapping(path_image: str, scale_percent = 0):
     
     row, column =  info_of_image(background_image)    
 
-    print(f'Размеры измененного изображения: {row, column}')
+    logger.info(f'Размер созданной разметки высота {row}, ширина {column}')
 
     background_rect = background.get_rect(bottomright=(row, column))
 
@@ -213,6 +241,7 @@ def create_mapping(path_image: str, scale_percent = 0):
                     name_image = choose_dirs()
                     if name_image == None :
                         delete_execute_images()
+                        logger.info(f'Удаление исполняемых изображений')
                         continue
                     #change_dir()
                     # size_square отвечает за длину и высоту квадрата 
@@ -222,7 +251,7 @@ def create_mapping(path_image: str, scale_percent = 0):
                         position= (int(event.pos[0]*100/scale_percent) - size_square/2 ,int(event.pos[1]*100/scale_percent) - size_square/2),\
                         name=f'{name_image}.png')
                     back_to_root_dirs()
-                    print('Размер квадрата',int(size_square/2*scale_percent/100))
+                    logger.info(f'Размер квадрата вырезки равен : {int(size_square/2*scale_percent/100)}')
                     pygame.draw.rect(screen, 
                     (0, 0, 255), 
                     (event.pos[0] - int(size_square/2*scale_percent/100) , event.pos[1] - int(size_square/2*scale_percent/100) , int(size_square*scale_percent/100) , int(size_square*scale_percent/100)))
@@ -236,10 +265,10 @@ def delete_execute_images():
     for root, dirs, files in os.walk(current_path, topdown=False):
         for name in files:
             if name == 'execute.jpg':
-                print('Файл по адресу удален: ' + os.path.join(root, name))
+                logger.info(f'Файл по адресу удален: ' + os.path.join(root, name))
                 os.remove(f'{current_path}\execute.jpg')
             elif name == 'execute_true_scale.jpg':
-                print('Файл по адресу удален: ' + os.path.join(root, name))
+                logger.info(f'Файл по адресу удален: ' + os.path.join(root, name))
                 os.remove(f'{current_path}\execute_true_scale.jpg')
 
 
@@ -254,7 +283,7 @@ def auto_naming_image_for_dirs(name_dirs):
         results += times
     
     
-    print(results)
+    logger.info(f'Процедурное название объекта: {name_dirs}-{results}')
     return f'{name_dirs}-{results}'
 
 
@@ -341,6 +370,7 @@ def main():
     num_files = len(fnames) # number of images found
     if num_files == 0:
         py.popup('Нет подходящих файлов')
+        logger.error('Подходящие файлы не обнаружены')
         raise SystemExit()
 
     # ------------------------------------------------------------------------------
@@ -425,7 +455,7 @@ def main():
         window.close()
 
     except IndexError as error:
-        print(f'Выявлена ошибка {error}')
+        logger.error(f'Выявлена ошибка {error}')
         window.close()
         main()
 
