@@ -1,11 +1,11 @@
 from datetime import datetime
 from time import time_ns
-from turtle import pos, position
+from turtle import pos, position, window_width
 from unittest import result
 import pygame
 import os
 import io
-from PIL  import Image, ImageTk
+from PIL import Image, ImageTk
 import PySimpleGUI as py
 import cv2
 import numpy as np
@@ -15,6 +15,15 @@ from tkinter import messagebox
 from win32api import GetSystemMetrics
 import logging
 
+def cleaner_log():
+    current_path = os.getcwd()
+    for root, dirs, files in os.walk(current_path, topdown=False):
+        for name in files:
+            if name == 'log_file.txt':
+                os.remove(f'{current_path}\log_file.txt')
+
+
+cleaner_log()
 
 logger = logging.getLogger('main_application')
 logger.setLevel(logging.INFO)
@@ -27,6 +36,7 @@ file_logger.setFormatter(formatter)
 
 logger.addHandler(file_logger)
 logger.info('Start application')
+
 
 def open_image(path_image: str) -> object :
     image = plt.imread(f'{path_image}')
@@ -272,7 +282,6 @@ def delete_execute_images():
                 os.remove(f'{current_path}\execute_true_scale.jpg')
 
 
-
 def auto_naming_image_for_dirs(name_dirs):
     dt = datetime.now()
     time = dt.time()
@@ -285,6 +294,32 @@ def auto_naming_image_for_dirs(name_dirs):
     
     logger.info(f'Процедурное название объекта: {name_dirs}-{results}')
     return f'{name_dirs}-{results}'
+
+
+def auto_creater_dirs(string_input: str):
+    split_string = string_input.split('-')
+    count_dirs, name_category = int(split_string[1]), split_string[0]
+    for iterator in range(1,count_dirs+1):   
+        try:
+            create_dir(f'{name_category}-{iterator}')
+        except FileExistsError:
+            continue
+
+
+def auto_create_dirs():
+    layout2 = [[py.Text('Введите: Название новой категорий-количество классов категорий ')],[py.Input(),],[py.Ok()] ]
+
+    window = py.Window('Авто создание папок', layout2)
+
+    event , values = window.read()
+
+    logger.info(f'Автоматическлое создание папок {values[0]}')
+
+    #print(values[0])
+
+    window.close()
+
+    return auto_creater_dirs(values[0])
 
 
 
@@ -306,7 +341,10 @@ def choose_dirs():
     layout = [col_files]   
 
     window = py.Window('Gui-Test', layout, return_keyboard_events=True,
+                right_click_menu=py.MENU_RIGHT_CLICK_EDITME_VER_EXIT, finalize=True, 
                 location=(0, 0), use_default_focus=False)
+
+    window["listbox"].bind('<Double-Button-1>' , "+-double click-")
 
     try:
         while True:
@@ -333,7 +371,6 @@ def choose_dirs():
             elif event in ('Выбрать папку'):
                 name_dirs = values["listbox"][0]  
                 change_dir(name_dirs)
-                #print(os.getcwd())
                 window.close()
                 return auto_naming_image_for_dirs(name_dirs)            
             elif event in ('Назад'):
@@ -342,24 +379,28 @@ def choose_dirs():
             elif event == 'listbox':                # something from the listbox
                 f = values["listbox"][0]            # selected filename
                 filename = os.path.join(folder, f)  # read this file
-                i = list_dir.index(f)                 # update running index
+                i = list_dir.index(f)                 # update running index         
+            elif event == 'listbox+-double click-':
+                name_dirs = values["listbox"][0]  
+                change_dir(name_dirs)
+                window.close()
+                return auto_naming_image_for_dirs(name_dirs) 
             else:
                 filename = os.path.join(folder, list_dir[i])
 
     except IndexError as error:
-        print(f'Выявлена ошибка {error}')
+        logger.error(f'Выявлена ошибка {error}')
         choose_dirs()
 
 
 def main():
-
     folder = py.popup_get_folder('Image folder to open', default_path='')
     
     if not folder:
         py.popup_cancel('Прерывание')
         raise SystemExit()
 
-    img_types = (".png", ".jpg", "jpeg", ".tiff", ".bmp")
+    img_types = (".png", ".jpg", "jpeg", ".tiff", ".bmp", '.tif')
 
     flist0 = os.listdir(folder)
 
@@ -402,7 +443,8 @@ def main():
         [image_elem]]
 
     col_files = [[py.Listbox(values=fnames, change_submits=True, size=(60, 30), key='listbox')],
-                [py.Button('Формирование DataSet', size=(12, 2)) ,py.Button('Сформировать папку', size=(12,2)), file_num_display_elem],
+                [py.Button('Формирование DataSet', size=(12, 2)) ,py.Button('Сформировать папку', size=(12,2)) , file_num_display_elem],
+                [py.Button('Автоматическое формирование папок', size=(30,2))],
                 [py.Text(size=(40,1), key='-OUTPUT-1')]]
     ''',
     [py.Text(size=(40,1), key='-OUTPUT-2')]'''
@@ -438,6 +480,8 @@ def main():
                 create_mapping(filename)              
             elif event in ('Сформировать папку'):
                 create_dir(naming_dirs())
+            elif event in ('Автоматическое формирование папок'):
+                auto_create_dirs()
             elif event == 'listbox':                # something from the listbox
                 f = values["listbox"][0]            # selected filename
                 filename = os.path.join(folder, f)  # read this file
