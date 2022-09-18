@@ -1,7 +1,9 @@
 import unittest
-
 from Application_create_test_datasets import * 
 import logging
+from screeninfo import get_monitors
+
+
 
 #Рассмотрим тестирование на примере выполнение методов по типу черного ящика
 class TestCreaterDatasets(unittest.TestCase):
@@ -21,14 +23,25 @@ class TestCreaterDatasets(unittest.TestCase):
     def test_auto_naming_image_for_dirs(self):
         self.assertEqual(auto_naming_image(),'склон-1-1', msg='Выполение провалено,  файлу передано неверное имя')
 
-def test_log():
-    logging.basicConfig(filename="logger.txt", level=logging.INFO)
-    
-    logging.debug("This is a debug message")
-    logging.info("Informational message")
-    logging.error("An error has happened!")
+
+    def test_auto_scale_background(self):
+        row, column = 3000, 6000
+        scale = auto_scale_background(row, column)
+        self.assertEqual(scale,17, msg='Найденный коэф масштaбирования не верен')
+
+        row_scale, column_scale = int(3000 * (scale/100)), int(6000* (scale/100))
+
+        screen_info_widht, screen_info_height = screen_info()
+        
+        self.assertTrue(row_scale < screen_info_widht and column_scale <screen_info_height, msg='Найденный коэф неверен')
+
 
 if __name__=='__main__':
-    
-    test_log()
-    #unittest.main() 
+    unittest.main()
+
+    #print(test_screeen_test_info())
+
+
+
+
+

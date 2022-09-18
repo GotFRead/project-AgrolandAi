@@ -12,8 +12,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pygame.locals import *
 from tkinter import messagebox
-from win32api import GetSystemMetrics
 import logging
+import Morfology_updating_image as morfy
+from screeninfo import get_monitors
 
 def cleaner_log():
     current_path = os.getcwd()
@@ -180,23 +181,59 @@ def create_background_image(path_image: str, scale_percent = 0):
 
     resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
 
-    image_background = 255*(cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)).astype('uint8')
+    image_background = (cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)).astype('uint8')
 
-    image = 255*(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)).astype('uint8')
-    #plt.imshow(resized)
-    #plt.show()
+    image = (cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)).astype('uint8')
+    
+    #image_background = morfy.morphological_change_image(resized)
+
+    #image = morfy.morphological_change_image(image)
 
     logger.info(f'Создание изображения для создания датасетов - {path_image}')
 
-
     return image, image_background , scale_percent
+
+def screen_info():
+    monitor_info =  get_monitors()
+
+    for m in monitor_info:
+        return int(get_screen_width(str(m))), int(get_screen_height(str(m)))
+
+
+def get_screen_width(monitor_info):
+    split_string = monitor_info.split('width')
+
+    split_string = split_string[1].split('=')
+
+    split_string = split_string[1].split(' ')
+
+    split_string = split_string[0].split(',')
+
+    widht = split_string[0]
+
+    return widht
+
+
+def get_screen_height(monitor_info):
+    split_string = monitor_info.split('height')
+
+    split_string = split_string[1].split('=')
+
+    split_string = split_string[1].split(' ')
+
+    split_string = split_string[0].split(',')
+
+    height = split_string[0]
+
+    return height
 
 
 def auto_scale_background(row, column):
-    screen_info_widht = GetSystemMetrics(0)
-    screen_info_height = GetSystemMetrics(1)
-    print(screen_info_height, screen_info_widht)
-    print(row, column)
+
+    screen_info_widht, screen_info_height = screen_info()
+
+    #print(screen_info_height, screen_info_widht)
+    #print(row, column)
     
     if row >= screen_info_height or column >= screen_info_widht:
         result_row  = 100/(row/screen_info_height)
@@ -218,7 +255,7 @@ def create_mapping(path_image: str, scale_percent = 0):
     #Создание изоображения для отображения картинки в background
     cv2.imwrite('execute.jpg', img=background_image*255)
 
-    #Создание изоображения для отображения картинки в beckground
+    #Создание изоображения для отображения картинки в background
     cv2.imwrite('execute_true_scale.jpg', img=orginal_image*255)
 
     image_true_scale = pygame.image.load("execute_true_scale.jpg")
@@ -247,7 +284,6 @@ def create_mapping(path_image: str, scale_percent = 0):
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-
                     name_image = choose_dirs()
                     if name_image == None :
                         delete_execute_images()
@@ -255,7 +291,7 @@ def create_mapping(path_image: str, scale_percent = 0):
                         continue
                     #change_dir()
                     # size_square отвечает за длину и высоту квадрата 
-                    size_square = 500                    
+                    size_square = 1000                    
                     create_dataset_object(image_true_scale ,\
                         size=(size_square,size_square),\
                         position= (int(event.pos[0]*100/scale_percent) - size_square/2 ,int(event.pos[1]*100/scale_percent) - size_square/2),\
