@@ -4,6 +4,10 @@ import cv2
 import matplotlib.pyplot as plt
 from PIL import Image 
 
+#
+# Development suspended
+#
+
 def LBPlearning(SquareObj,length,height,schet):
     print(length,height)
 

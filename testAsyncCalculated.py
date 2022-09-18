@@ -2,6 +2,10 @@ import numpy as np
 import PIL as pil 
 import cv2 as cv 
 
+#
+# Development suspended
+#
+
 class TemplateAnalyze(object):
     def __init__(self, row, colomn, NumberReader):
         self.row=row 

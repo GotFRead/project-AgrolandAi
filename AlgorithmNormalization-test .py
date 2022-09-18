@@ -16,6 +16,10 @@ import threading as thr
 #import testLBP-analyze as test
 
 #MatrixOfThreads=[[],[]] 
+
+#
+# Development suspended
+#
  
 
 '''
