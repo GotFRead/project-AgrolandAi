@@ -8,6 +8,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 import PIL as pil
 from PIL import Image, ImageFilter
+
+#
+# Development suspended
+#
+
+
 '''
 def _FilterSobel_():
     sobel_y = np.array([[ -1, -2, -1], 
