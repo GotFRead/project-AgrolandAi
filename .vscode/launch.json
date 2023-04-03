@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Start app",
+            "type": "python",
+            "request": "launch",
+            "program": "app/main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
