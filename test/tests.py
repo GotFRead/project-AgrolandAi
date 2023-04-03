@@ -1,5 +1,5 @@
 import unittest
-from Application_create_test_datasets import * 
+from app.Application_create_test_datasets import * 
 import logging
 from screeninfo import get_monitors
 
@@ -38,9 +38,6 @@ class TestCreaterDatasets(unittest.TestCase):
 
 if __name__=='__main__':
     unittest.main()
-
-    #print(test_screeen_test_info())
-
 
 
 
