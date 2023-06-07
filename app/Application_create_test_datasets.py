@@ -84,6 +84,7 @@ def create_dataset_object(screen, position: tuple, size=(1000, 1000), name='data
 
     save_clear_image(name)
 
+    print(f'Изображение - {name} - сохранено')
     logger.info(f'Изображение - {name} - сохранено')
 
 
@@ -197,7 +198,7 @@ def create_background_image(path_image: str, scale_percent=0):
     image_background = (cv2.cvtColor(
         resized, cv2.COLOR_BGR2GRAY)).astype('uint8')
 
-    image = (cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)).astype('uint8')
+    # image = (cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)).astype('uint8')
 
     logger.info(f'Создание изображения для создания датасетов - {path_image}')
 
