@@ -1,5 +1,6 @@
 # Пропишем алгоритмы приведения изображения к нормальной форме
 import math
+import cv2
 import cv2 as morfological_transformation
 import matplotlib.pyplot as plt
 import imageio
@@ -12,6 +13,10 @@ import PIL as pil
 from PIL import Image, ImageFilter
 import base64
 import os
+
+
+def convert_to_channel_one_channel(path_to_image: str):
+    return cv2.imread(path_to_image, 0)
 
 
 def edges(image_path):
@@ -35,11 +40,6 @@ def dilate_image(image, iteratrion, size_kernal):
 
 
 def non_shum(image_path):
-    # matrix_analyze,matrix=np.asarray(image, dtype='uint8'),[np.asarray(image, dtype='uint8')]
-    # column=len(matrix[0])
-    # row=len(matrix[0][0])
-    # matrix=np.asarray(image, dtype='uint8')
-
     img = plt.imread(f'{image_path}')
     plt.imshow(img, interpolation='none')
     plt.show()
@@ -73,7 +73,7 @@ def non_shum(image_path):
     masking = morfological_transformation.morphologyEx(
         masking, morfological_transformation.MORPH_OPEN, kernel_open)
     # ________
-    # Метод разделяй и властвуй раздели на минимально возможные блоки и начни обработку как сектора если сектор более пустой чем средне квадратичное удаляй все
+    # TODO Метод разделяй и властвуй раздели на минимально возможные блоки и начни обработку как сектора если сектор более пустой чем средне квадратичное удаляй все
 
     # cort=img_bw.shape
     # vs,sh,dht=cort(0),cort(1),cort(2)
@@ -106,7 +106,7 @@ def morphological_change_image(image):
         masking, morfological_transformation.MORPH_OPEN, kernel_open)
 
     masking = morfological_transformation.dilate(
-        masking, kernel_open, iterations=2)
+        masking, kernel_open, iterations=1)
 
     kernel_open = morfological_transformation.getStructuringElement(
         morfological_transformation.MORPH_RECT, (1, 1))
@@ -117,7 +117,7 @@ def morphological_change_image(image):
     masking = morfological_transformation.morphologyEx(
         masking, morfological_transformation.MORPH_OPEN, kernel_open)
     masking = morfological_transformation.dilate(
-        masking, kernel_open, iterations=2)
+        masking, kernel_open, iterations=1)
 
     return masking
 
@@ -150,9 +150,21 @@ def image_view(image_path: str):
 
 
 def cleaner_to_value(image, params):
+    summary_value_px, count_px = int(), int()
     for x in range(len(image)):
         for y in range(len(image[x])):
-            image[x][y] -= [params, params, params]
+            for px in image[x][y]:
+                summary_value_px += px
+                count_px += 1
+
+    denose = float(summary_value_px / count_px)
+
+    for x in range(len(image)):
+        for y in range(len(image[x])):
+            image[x][y] -= [denose, denose, denose]
+
+    for x in range(len(image)):
+        for y in range(len(image[x])):
             temp = list()
             for u in image[x][y]:
                 temp.append(math.ceil(u))
@@ -181,42 +193,38 @@ def wait_byte_form_image(bytestring):
     return False
 
 
-def normalization_by_dirs(path, level_denoise=0.3):
+def normalization_by_dirs(path, level_denoise=0.5):
     for root, dirs, files in os.walk(path, topdown=False):
         for file in files:
-            os.chdir(r"D:\Python\datasets_from_app\normalized_image")
+            os.chdir(r"D:\Python\datasets_from_app\normalized_image\равнины")
             image = plt.imread(root + f'\{file}')
             image = cleaner_to_value(image, level_denoise)
             image = morphological_change_image(image)
-            name_image = file.replace('.', '_')
+            name_image = file.replace('.', '_').split('_')[-2]
             print(root)
             morfological_transformation.imwrite(
-                f'Normalized_{name_image}.png', image * 255)
+                f'Normalized_plain{name_image}.png', image * 255)
 
+def convert_to_one_channel_by_dirs(path):
+    for root, dirs, files in os.walk(path, topdown=False):
+        for file in files:
+            os.chdir(r'D:\Python\Project_PVS-CNN\one_channel_images\test_validate\slope')
+            one_channel_image = convert_to_channel_one_channel(root + f'\{file}')
+            name_image = file.split('.')[0]
+            morfological_transformation.imwrite(
+                f'{name_image}.png', one_channel_image)
+
+def resize_image(path, scale: tuple): 
+    for root, dirs, files in os.walk(path, topdown=False):
+        for file in files:
+            os.chdir(r'D:\Python\DataFrame\resize_one_channel\train\plain')
+            resize_one_channel_image = plt.imread(root + f'\{file}')
+            resize_one_channel_image = cv2.resize(resize_one_channel_image, scale)
+            morfological_transformation.imwrite(
+                f"r_{file.split('.')[0]}.png", resize_one_channel_image)
+                # name_image = file.split('.')[0]
+                # morfological_transformation.imwrite(
+                #     f'{name_image}.png', resize_one_channel_image)
 
 if __name__ == '__main__':
-    # normalization('E:\Python\Project_PVS-CNN\склон-1 - демонстрационная выборка\\склон-1 - демонстрационная выборка-143920.148837.png')
-
-    # image = plt.imread(r"D:\Python\Project_PVS-CNN\склон-1 - демонстрационная выборка\219542.png")
-    normalization_by_dirs('D:\Python\datasets_from_app\кытынки')
-    # with open(r"D:\Python\Project_PVS-CNN\склон-1 - демонстрационная выборка\склон-1 - демонстрационная выборка-210110.522251.png", 'rb') as img:
-    #     image = img.read()
-    #     print(image)
-
-    # if wait_byte_form_image(image):
-    #     pass
-    # else:
-    #     print('Неверный формат изображения')
-
-    # stream = io.StringIO(image)
-    # imagei = Image.open(image)
-    # imagei.show()
-    # print(image)
-    # print(image.decode())
-    # print(base64.b64encode([image]))
-    # print(bytes([image]))
-    # plt.imshow(image)
-    # plt.show()
-    # img=morfological_transformation.imread('E:\Python\Dataset-original\\2.bmp')
-    # clener_to_value(image,'proba', 0.5)
     pass
