@@ -2,10 +2,26 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Start app",
+            "name": "Start App",
             "type": "python",
             "request": "launch",
             "program": "app/main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Start Create_DataFrame",
+            "type": "python",
+            "request": "launch",
+            "program": "app/Сreate_dataframe.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Start Service",
+            "type": "python",
+            "request": "launch",
+            "program": "app/analyze_service/main.py",
             "console": "integratedTerminal",
             "justMyCode": true
         }
