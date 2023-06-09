@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from pygame.locals import *
 from tkinter import messagebox
 import logging
-import Morfology_updating_image as morfy
+import helpers.Morfology_updating_image as morfy
 from screeninfo import get_monitors
 
 
