@@ -36,6 +36,11 @@ def create_logger(logger_name):
 
 logger = create_logger("service_main_thread")
 
+response_template = {
+    'content': '',
+    'description':''
+}
+
 
 class Service:
     """
@@ -96,7 +101,7 @@ class Service:
         return content, params
 
     def init_solution(self, content, params):
-        analyze_module.solutionFactory(content, params)
+        return analyze_module.solutionFactory(content, params).execution()
 
     async def main_safe_deploy(self):
         server = await asyncio.start_server(
@@ -127,7 +132,10 @@ class Service:
         def analyze():
             if not request.json or 'content' not in request.json or 'parameters' not in request.json:
                 abort(400)
-            result = self.init_solution(*self.get_content_easy_deploy(request.json))
+            response = response_template
+            content = self.init_solution(*self.get_content_easy_deploy(request.json))
+            response['content'] = content.decode('ascii')
+            return response
         app.run(debug=False)
 
 

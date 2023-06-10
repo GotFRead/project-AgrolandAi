@@ -1,0 +1,13 @@
+{
+    "solutionFactory":{
+        "classes": ["1-3", "3 и более"],
+        "atomic_block": [1000, 1000, 3]
+    },
+    "worker":{
+        "image_format": [100,100]
+    },
+    "analyzer":{
+        "path_to_CCN": "C:\\Users\\Aleksey ^_^\\Desktop\\prototype_CNN_1_4_val_acc_99.h5"
+    }
+
+}
