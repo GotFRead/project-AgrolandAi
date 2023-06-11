@@ -330,17 +330,20 @@ def delete_non_clean_image(name_image):
                 os.remove(f'{current_path}\\{name}')
 
 def delete_execute_images():
+    deleted = [False, False]
     current_path = os.getcwd()
     for root, dirs, files in os.walk(current_path, topdown=False):
         for name in files:
-            if name == 'execute.jpg':
+            if name == 'execute.jpg' and deleted[0] is False:
                 logger.info(f'Файл по адресу удален: ' +
                             os.path.join(root, name))
                 os.remove(f'{current_path}\execute.jpg')
-            elif name == 'execute_true_scale.jpg':
+                deleted[0] = True
+            elif name == 'execute_true_scale.jpg' and deleted[1] is False:
                 logger.info(f'Файл по адресу удален: ' +
                             os.path.join(root, name))
                 os.remove(f'{current_path}\execute_true_scale.jpg')
+                deleted[1] = True
 
 
 def auto_naming_image_for_dirs(name_dirs):
@@ -500,9 +503,9 @@ def main():
            [image_elem]]
 
     col_files = [[py.Listbox(values=fnames, change_submits=True, size=(60, 30), key='listbox')],
-                 [py.Button('Формирование DataSet', size=(12, 2)), py.Button(
-                     'Сформировать папку', size=(12, 2)), file_num_display_elem],
-                 [py.Button('Автоматическое формирование папок', size=(30, 2))],
+                 [py.Button('Выбрать объект', size=(12, 2)), py.Button(
+                     'Сформировать класс', size=(12, 2)), file_num_display_elem],
+                 [py.Button('Автоматическое формирование класс', size=(30, 2))],
                  [py.Text(size=(40, 1), key='-OUTPUT-1')]]
     ''',
     [py.Text(size=(40,1), key='-OUTPUT-2')]'''
@@ -532,13 +535,13 @@ def main():
             #    if i < 0:
             #        i = num_files + i
             #    filename = os.path.join(folder, fnames[i])
-            elif event in ('Формирование DataSet'):
+            elif event in ('Выбрать объект'):
                 f = values["listbox"][0]
                 filename = os.path.join(folder, f)
                 create_mapping(filename)
-            elif event in ('Сформировать папку'):
+            elif event in ('Сформировать класс'):
                 create_dir(naming_dirs())
-            elif event in ('Автоматическое формирование папок'):
+            elif event in ('Автоматическое формирование классов'):
                 auto_create_dirs()
             elif event == 'listbox':                # something from the listbox
                 f = values["listbox"][0]            # selected filename
