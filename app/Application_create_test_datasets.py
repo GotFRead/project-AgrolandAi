@@ -117,10 +117,10 @@ def change_dir(name: str) -> None:
 
 def naming_dirs():
     # Create layout
-    layout2 = [[py.Text('Введите название новой папки')],
+    layout2 = [[py.Text('Введите название нового класса')],
                [py.Input(), ], [py.Ok()]]
 
-    window = py.Window('Название папки', layout2)
+    window = py.Window('Сформировать класс', layout2)
 
     event, values = window.read()
 
@@ -368,13 +368,13 @@ def auto_creater_dirs(string_input: str):
 
 def auto_create_dirs():
     layout2 = [[py.Text(
-        'Введите: Название новой категорий-количество классов категорий ')], [py.Input(), ], [py.Ok()]]
+        'Введите: Название новой категории - количество классов категорий ')], [py.Input(), ], [py.Ok()]]
 
-    window = py.Window('Авто создание папок', layout2)
+    window = py.Window('Авто создание классов', layout2)
 
     event, values = window.read()
 
-    logger.info(f'Автоматическлое создание папок {values[0]}')
+    logger.info(f'Автоматическлое создание классов {values[0]}')
 
     # print(values[0])
 
